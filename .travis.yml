@@ -1,10 +1,15 @@
-jobs:
-  include:
-    - os: linux
-      language: python
-      python:
-       - "3.8"
-      arch: amd64
-      dist: focal
-      script:
-        - python hello_world.py
+os: linux
+dist: focal
+group: edge
+language: python
+
+env:
+  - PRIVATE_KEY_PASSWORD=Pankaj@1992$
+
+before_script:
+  # Decrypt the private key if it's encrypted
+  - openssl aes-256-cbc -K $encrypted_51f11bfbfc28_key -iv $encrypted_51f11bfbfc28_iv -in cosign.key.enc -out cosign.key -d -pass pass:$PRIVATE_KEY_PASSWORD
+  # Make sure the private key has the correct permissions
+  - chmod 600 cosign.key
+  # Export environment variables if needed
+  - export COSIGN_PASSWORD=$PRIVATE_KEY_PASSWORD
